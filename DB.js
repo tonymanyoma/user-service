@@ -2,7 +2,7 @@ const { Client } = require('pg');
 const { Sequelize } = require('sequelize');
 
 
-const sequelize = new Sequelize('fusepong_solutions_core_development', 'postgres', 'root', {
+const sequelize = new Sequelize('fusepong_solutions_core_development', 'postgres', '', {
    host: 'localhost',
    dialect: 'postgres'
  });
