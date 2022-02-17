@@ -4,7 +4,7 @@ const moment = require('moment');
 const crypto = require('crypto');
 const CryptoJS = require("crypto-js");
 require('dotenv').config();
-const redisclient = require('../Config/redis');
+// const redisclient = require('../Config/redis');
 const decryptMiddleware = require('../Middlewares/decrypt')
 
 // import models
