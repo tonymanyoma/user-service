@@ -12,8 +12,8 @@ const server = http.createServer(app)
 // app.use(require('express-status-monitor')());
 
 // Cargar ficheros rutas
-var authRoutes = require('./routes/authRoutes');
-var userRoutes = require('./routes/userRoutes');
+var authRoutes = require('./Routes/authRoutes');
+var userRoutes = require('./Routes/userRoutes');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
