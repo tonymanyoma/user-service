@@ -35,21 +35,19 @@ var controller = {
 
         try{
 
-            console.log(req.body)
+            var data = req.body.data
 
-            // var data = req.body.data
+            var decrypted = decryptMiddleware.decrypt(data)
 
-            // var decrypted = decryptMiddleware.decrypt(data)
-
-            // var email = decrypted.attributes.email;
-            // var password = decrypted.attributes.password;
-            // var rut = decrypted.attributes.rut;
-            // var company = decrypted.attributes.company;
+            var email = decrypted.attributes.email;
+            var password = decrypted.attributes.password;
+            var rut = decrypted.attributes.rut;
+            var company = decrypted.attributes.company;
             
-            var email = req.body.attributes.email;
-            var password = req.body.attributes.password;
-            var rut = req.body.attributes.rut;
-            var company = req.body.attributes.company;
+            // var email = req.body.attributes.email;
+            // var password = req.body.attributes.password;
+            // var rut = req.body.attributes.rut;
+            // var company = req.body.attributes.company;
             var userAgent = req.headers['user-agent'];
             var deviceId = req.headers['x-device-id'];
 
@@ -73,7 +71,7 @@ var controller = {
             }
 
             if(user == null){
-                res.json({error:'error user null'}) 
+                res.json({error:'error el usuario no se encuentra'}) 
             }
 
             
@@ -127,7 +125,7 @@ var controller = {
 
                 }else{
 
-                res.json({error:'error'})
+                res.json({error:'contraseña incorrecta'})
 
                 }
             }
