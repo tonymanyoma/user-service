@@ -99,25 +99,25 @@ var controller = {
 
         try{
 
-            // var data = req.body.data
+            var data = req.body.data
 
-            // var decrypted = decryptMiddleware.decrypt(data)
+            var decrypted = decryptMiddleware.decrypt(data)
 
-            // var rut = decrypted.data.rut
-            // var company_id = decrypted.data.company_id
-            // var email = decrypted.data.email
-            // var password = decrypted.data.password
-            // var password_confirmation = decrypted.data.password_confirmation
-            // var user_category_id = decrypted.data.user_info_attributes.user_category_id
-            // var blocked = decrypted.data.blocked
+            var rut = decrypted.data.rut
+            var company_id = decrypted.data.company_id
+            var email = decrypted.data.email
+            var password = decrypted.data.password
+            var password_confirmation = decrypted.data.password_confirmation
+            var user_category_id = decrypted.data.user_info_attributes.user_category_id
+            var blocked = decrypted.data.blocked
 
-            var rut = req.body.data.rut
-            var company_id = req.body.data.company_id
-            var email = req.body.data.email
-            var password = req.body.data.password
-            var password_confirmation = req.body.data.password_confirmation
-            var user_category_id = req.body.data.user_info_attributes.user_category_id
-            var blocked = req.body.data.blocked
+            // var rut = req.body.data.rut
+            // var company_id = req.body.data.company_id
+            // var email = req.body.data.email
+            // var password = req.body.data.password
+            // var password_confirmation = req.body.data.password_confirmation
+            // var user_category_id = req.body.data.user_info_attributes.user_category_id
+            // var blocked = req.body.data.blocked
 
             var user = {}
             var user_info = {}
@@ -135,14 +135,14 @@ var controller = {
                     })
                 }
 
-                req.body.data.email != null ? user.email = req.body.data.email : null
-                req.body.data.mobile != null ? user.mobile = req.body.data.mobile : null
+                decrypted.data.email != null ? user.email = decrypted.data.email : null
+                decrypted.data.mobile != null ? user.mobile = decrypted.data.mobile : null
 
-                req.body.data.user_info_attributes.name != null ? user_info.name = req.body.data.user_info_attributes.name : null
-                req.body.data.user_info_attributes.last_name != null ? user_info.last_name = req.body.data.user_info_attributes.last_name : null
-                req.body.data.user_info_attributes.gender != null ? user_info.gender = req.body.data.user_info_attributes.gender : null
-                req.body.data.user_info_attributes.birthday != null ? user_info.birthday = req.body.data.user_info_attributes.birthday : null
-                req.body.data.user_info_attributes.location_id != null ? user_info.location_id = req.body.data.user_info_attributes.location_id : null
+                decrypted.data.user_info_attributes.name != null ? user_info.name = decrypted.data.user_info_attributes.name : null
+                decrypted.data.user_info_attributes.last_name != null ? user_info.last_name = decrypted.data.user_info_attributes.last_name : null
+                decrypted.data.user_info_attributes.gender != null ? user_info.gender = decrypted.data.user_info_attributes.gender : null
+                decrypted.data.user_info_attributes.birthday != null ? user_info.birthday = decrypted.data.user_info_attributes.birthday : null
+                decrypted.data.user_info_attributes.location_id != null ? user_info.location_id = decrypted.data.user_info_attributes.location_id : null
 
                 if(user_category_id != null && user_category_id != ''){
                     user_category = await UserCategory.findOne({ where: { id: user_category_id} })
@@ -190,18 +190,18 @@ var controller = {
 
         try{
 
-            // var data = req.body.data
+            var data = req.body.data
 
-            // var decrypted = decryptMiddleware.decrypt(data)
+            var decrypted = decryptMiddleware.decrypt(data)
 
-            // var email = decrypted.data.attributes.email
-            // var password = decrypted.data.attributes.password
-            // var password_confirmation = decrypted.data.attributes.password_confirmation
+            var email = decrypted.data.attributes.email
+            var password = decrypted.data.attributes.password
+            var password_confirmation = decrypted.data.attributes.password_confirmation
 
             
-            var email = req.body.data.attributes.email
-            var password = req.body.data.attributes.password
-            var password_confirmation = req.body.data.attributes.password_confirmation
+            // var email = req.body.data.attributes.email
+            // var password = req.body.data.attributes.password
+            // var password_confirmation = req.body.data.attributes.password_confirmation
 
 
             var user = await User.findOne({ where: { email: email} })
@@ -240,15 +240,15 @@ var controller = {
 
         try{
 
-            // var data = req.body.data
+            var data = req.body.data
 
-            // var decrypted = decryptMiddleware.decrypt(data)
+            var decrypted = decryptMiddleware.decrypt(data)
 
-            // var email = decrypted.data.email
-            // var company = decrypted.data.company
+            var email = decrypted.data.email
+            var company = decrypted.data.company
 
-            var email = req.body.data.email
-            var company = req.body.data.company
+            // var email = req.body.data.email
+            // var company = req.body.data.company
 
             var validation_code
             var new_password
@@ -282,9 +282,8 @@ var controller = {
                         company_logo: company.logo
                     }
 
-                    // mailController.sendEmail(user.email,'Recuperación de contraseña','forgotPasswordWithCode',data)
 
-                    mailController.sendEmail('antony_manyoma@hotmail.com','Recuperación de contraseña','forgotPasswordWithCode',data)
+                    mailController.sendEmail(user.email,'Recuperación de contraseña','forgotPasswordWithCode',data)
 
                     res.json({
                         message: 'hemos enviado un correo con las instrucciones para continuar el proceso',
@@ -314,15 +313,15 @@ var controller = {
 
         try{
 
-            // var data = req.body.data
+            var data = req.body.data
 
-            // var decrypted = decryptMiddleware.decrypt(data)
+            var decrypted = decryptMiddleware.decrypt(data)
 
-            // var userId = decrypted.data.id
-            // var password = decrypted.data.password
+            var userId = decrypted.data.id
+            var password = decrypted.data.password
 
-            var userId = req.body.data.id
-            var password = req.body.data.password
+            // var userId = req.body.data.id
+            // var password = req.body.data.password
 
             var user = await User.findOne({ where: { id: userId }, limit: 1})
 
@@ -376,15 +375,17 @@ var controller = {
 
         try{
 
-            // var data = req.body.data
+            var data = req.body.data
 
-            // var decrypted = decryptMiddleware.decrypt(data)
+            var decrypted = decryptMiddleware.decrypt(data)
 
-            // var users = decrypted.data.new
-            // var company = decrypted.data.company_id
+            console.log(decrypted)
 
-            var users = req.body.data.new
-            var company = req.body.data.company_id
+            var users = decrypted.data.new
+            var company = decrypted.data.company_id
+
+            // var users = req.body.data.new
+            // var company = req.body.data.company_id
 
             var userSaved
             var available_locations
