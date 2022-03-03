@@ -53,7 +53,8 @@ var controller = {
 
             var user;
             var resource;
-            var client;
+            var client='';
+            var client_id='';
 
 
             if(email != '' && rut == '' || rut == null){
@@ -94,7 +95,7 @@ var controller = {
 
                     if(resource.user_info_type == 'Client'){
                         client = await Client.findOne({ where: { id: resource.user_info_id} })
-
+                        client_id = client.id
                     }
 
                     
@@ -112,7 +113,7 @@ var controller = {
                         message: 'Usuario autenticado',
                         log_file: "SessionLog",
                         data: {attributes:resource, id:resource.id},
-                        included: [{attributes:client, id:client.id}],
+                        included: [{attributes:client, id:client_id}],
                         status: 201,
                         meta: {
                             authentication_token: accessToken.token,
