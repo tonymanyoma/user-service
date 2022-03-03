@@ -79,7 +79,9 @@ var controller = {
             if(user){
                 res.json({
                     message: 'Usuario encontrado',
-                    data: {user: user, user_categories: user_categories, user_info: user_info},
+                    user: user, 
+                    user_categories: user_categories, 
+                    user_info: user_info, 
                     status: 200,
                 });
             }else{
@@ -103,13 +105,15 @@ var controller = {
 
             var decrypted = decryptMiddleware.decrypt(data)
 
-            var rut = decrypted.data.rut
-            var company_id = decrypted.data.company_id
-            var email = decrypted.data.email
-            var password = decrypted.data.password
-            var password_confirmation = decrypted.data.password_confirmation
-            var user_category_id = decrypted.data.user_info_attributes.user_category_id
-            var blocked = decrypted.data.blocked
+            console.log(decrypted)
+
+            var rut = decrypted.rut
+            var company_id = decrypted.company_id
+            var email = decrypted.email
+            var password = decrypted.password
+            var password_confirmation = decrypted.password_confirmation
+            var user_category_id = decrypted.user_info_attributes.user_category_id
+            var blocked = decrypted.blocked
 
             // var rut = req.body.data.rut
             // var company_id = req.body.data.company_id
@@ -135,14 +139,14 @@ var controller = {
                     })
                 }
 
-                decrypted.data.email != null ? user.email = decrypted.data.email : null
-                decrypted.data.mobile != null ? user.mobile = decrypted.data.mobile : null
+                decrypted.email != null ? user.email = decrypted.email : null
+                decrypted.mobile != null ? user.mobile = decrypted.mobile : null
 
-                decrypted.data.user_info_attributes.name != null ? user_info.name = decrypted.data.user_info_attributes.name : null
-                decrypted.data.user_info_attributes.last_name != null ? user_info.last_name = decrypted.data.user_info_attributes.last_name : null
-                decrypted.data.user_info_attributes.gender != null ? user_info.gender = decrypted.data.user_info_attributes.gender : null
-                decrypted.data.user_info_attributes.birthday != null ? user_info.birthday = decrypted.data.user_info_attributes.birthday : null
-                decrypted.data.user_info_attributes.location_id != null ? user_info.location_id = decrypted.data.user_info_attributes.location_id : null
+                decrypted.user_info_attributes.name != null ? user_info.name = decrypted.user_info_attributes.name : null
+                decrypted.user_info_attributes.last_name != null ? user_info.last_name = decrypted.user_info_attributes.last_name : null
+                decrypted.user_info_attributes.gender != null ? user_info.gender = decrypted.user_info_attributes.gender : null
+                decrypted.user_info_attributes.birthday != null ? user_info.birthday = decrypted.user_info_attributes.birthday : null
+                decrypted.user_info_attributes.location_id != null ? user_info.location_id = decrypted.user_info_attributes.location_id : null
 
                 if(user_category_id != null && user_category_id != ''){
                     user_category = await UserCategory.findOne({ where: { id: user_category_id} })
@@ -244,8 +248,8 @@ var controller = {
 
             var decrypted = decryptMiddleware.decrypt(data)
 
-            var email = decrypted.data.email
-            var company = decrypted.data.company
+            var email = decrypted.email
+            var company = decrypted.company
 
             // var email = req.body.data.email
             // var company = req.body.data.company
@@ -317,8 +321,8 @@ var controller = {
 
             var decrypted = decryptMiddleware.decrypt(data)
 
-            var userId = decrypted.data.id
-            var password = decrypted.data.password
+            var userId = decrypted.id
+            var password = decrypted.password
 
             // var userId = req.body.data.id
             // var password = req.body.data.password
@@ -381,8 +385,8 @@ var controller = {
 
             console.log(decrypted)
 
-            var users = decrypted.data.new
-            var company = decrypted.data.company_id
+            var users = decrypted.new
+            var company = decrypted.company_id
 
             // var users = req.body.data.new
             // var company = req.body.data.company_id
@@ -459,7 +463,7 @@ var controller = {
                         user_info.access_doors = [available_locations[0]]
                         user_info.location_id = available_locations.length < 1 ? null : available_locations
                        
-                        newClient = Client.create(user_info) 
+                        newClient = await Client.create(user_info) 
 
                         var encryptedPassword = await bcrypt.hash(users[i]['Rut'][0], 10);
 
@@ -472,7 +476,7 @@ var controller = {
                         user.user_company = 'us.'+users[i]['Rut'][0]+'.comp.'+findCompany.id
                         user.user_info_id = newClient.id
 
-                        newUser = User.create(user)
+                        newUser = await User.create(user)
 
 
                         if(newUser && newClient){
