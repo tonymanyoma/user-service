@@ -5,8 +5,10 @@ require('dotenv').config();
 const middleware = {
 
     validateToken: function (req, res, next) {
-
-        const accessToken = req.headers['authorization'];
+        console.log('Token', req.headers['authorization'])
+        const formatToken =  req.headers['authorization'].split('Bearer ');
+        
+        const accessToken = formatToken[1];
     
         if (!accessToken)res.send('Access denied')
     
