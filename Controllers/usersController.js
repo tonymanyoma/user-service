@@ -514,7 +514,7 @@ var controller = {
 
                 res.json({
                     status: 422,
-                    title: 'Ingrese una compañia válida',
+                    ans: 'Ingrese una compañia válida',
                 })
 
             }
