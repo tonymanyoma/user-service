@@ -506,7 +506,7 @@ var controller = {
 
                 res.json({
                     status: 200,
-                    title: 'Usuarios importados y guardados correctamente a excepción de los ruts:'+ ruts
+                    ans: 'Usuarios importados y guardados correctamente a excepción de los ruts:'+ ruts
                 })
 
 
