@@ -13,22 +13,121 @@ const Client = require('../Models/Client');
 const Device = require('../Models/Device');
 const UserCategory = require('../Models/UserCategory');
 const AuthenticationSignature = require('../Models/AuthenticationSignature');
+const Location = require('../Models/Location');
 
 var controller = {
 
-    getUsers: (req, res) => {
+    getUsers: async (req, res) => {
 
-        User.findAll().then(function(data){
+        try{
+
+    
+            var data = req.body.data
+
+            var decrypted = decryptMiddleware.decrypt(data)
+
+            console.log(decrypted)
+
+            var company = decrypted.company.id  
+
+            
+            var access_state = req.query.access_state
+            var location_id = req.query.location_id
+
+            // var company = req.body.company
+
+            
+            // var access_state = req.query.access_state
+            // var location_id = req.body.location_id
+            
+            var users = []
+            // var location = await User.findOne({ where: { id: location_id} })
+
+            if(access_state){
+                
+                users = await User.findAll({ 
+                 where: { 
+                    company: company, 
+                    user_info_type: 'Client'
+                 },
+                 order: [
+                    ['email', 'ASC'],
+                 ], 
+                 include: [{
+                    model: Client, as: 'fk_user_info', where:{access_state:access_state}}
+                 ]} )
+
+              }
+            
+         
+            // if(location_id){
+
+            //     var findlocation = await User.findOne({ where: { id: location_id} })
+            //     users + findlocation
+            // }
+
+
+            if(users.length == 0){
+
+                console.log('holii' )
+
+                users = await User.findAll({ 
+                    where: { 
+                       company: company, 
+                       user_info_type: 'Client'
+                    },
+                    order: [
+                       ['email', 'ASC'],
+                    ], 
+                    include: [{
+                       model: Client, as: 'fk_user_info', where:{access_state:"GRANTED"}}
+                    ]} )
+            }
+
+
+            var users_map = []
+
+            var date = moment().format('YYYY');
+
+            console.log('users', users)
+
+            for(var i=0; i<users.length; i++){
+
+                var data = new Object
+
+                var findlocation = await Location.findOne({ where: { id: users[i].fk_user_info.location_id} })
+
+                var birthday = moment(users[i].fk_user_info.birthday).format('YYYY')
+                var age = date - birthday 
+
+                data.id = users[i].id
+                data.email = users[i].email
+                data.mobile = users[i].mobile
+                data.name = users[i].fk_user_info.name + users[i].fk_user_info.last_name
+                users[i].fk_user_info.gender != null && ( users[i].fk_user_info.gender == 'm' || users[i].fk_user_info.gender == 'M' || users[i].fk_user_info.gender == 'Masculino') ? data.gender = 'Masculino' : users[i].fk_user_info.gender != null && ( users[i].fk_user_info.gender == 'f' || users[i].fk_user_info.gender == 'F' || users[i].fk_user_info.gender == 'Femenino') ? data.gender ='Femenino' : null
+                data.age = age
+                data.access_state = users[i].fk_user_info.access_state
+                findlocation != null ? data.location_name = findlocation.title : null
+
+                console.log('data', data)
+    
+                users_map.push(data)
+               
+
+            }
+
             res.json({
-              username: req.user,
-              message:'desde el microservicio de usuarios', 
-              data: data
-            })
-        })
-        .catch(error =>{
-            console.log('error', error)
-            res.json({error:error})
-        })
+                message: 'Directorio de usuarios',
+                data: users_map,
+                status: 200,
+            });
+
+
+
+        }catch(e){
+
+            res.json({error:e})
+        }
       
     },
 
@@ -72,11 +171,12 @@ var controller = {
 
             var user = await User.findOne({ where: { rut: rut,company: company_id} })
 
-            var user_info = await User.user_info(user.user_info_id)
-
-            var user_categories = await UserCategory.findOne({ where: { company_id: company_id} })
-
             if(user){
+
+                var user_info = await User.user_info(user.user_info_id)
+
+                var user_categories = await UserCategory.findOne({ where: { company_id: company_id} })
+
                 res.json({
                     message: 'Usuario encontrado',
                     user: user, 
@@ -409,10 +509,15 @@ var controller = {
                 available_locations=[]
                 user_category= null
 
+                console.log('find company')
+
                 for(var i=0; i<users.length; i++){
 
 
-                    var findUser = await User.findOne({ where: { rut: users[i]['Rut'][0]}, limit: 1})
+                    var rut = users[i]['Rut'][0].toString()
+
+                    var findUser = await User.findOne({ where: { rut: rut}, limit: 1})
+
 
                     if(users[i]['Plan de usuario'][0] != null){
 
@@ -422,12 +527,13 @@ var controller = {
                         console.log('available_locations',available_locations)
                     }
 
-                    if(findUser != null){
-
+                    if(findUser){
+                        console.log('find user')
 
                         user.user_info_type = 'Client'
                         user.email = users[i]['Email'][0]
                         user.mobile = users[i]['Celular'][0]
+                        user.document_type = users[i]['Tipo de documento'][0]
 
                         User.update(user, {where: { id: findUser.id }} ) 
 
@@ -448,6 +554,8 @@ var controller = {
                         Client.update(user_info, {where: { id: findUser.user_info_id }} ) 
 
                     }else{
+
+                        console.log('not find user')
     
 
                         user_info.birthday = moment(users[i]['Fecha de nacimiento'][0],'DD/MM/YYYY').format('YYYY-MM-DD ')
@@ -462,18 +570,20 @@ var controller = {
                         user_info.user_category_id = users[i]['Plan de usuario'][0] != null ? user_category[0].id : null
                         user_info.access_doors = [available_locations[0]]
                         user_info.location_id = available_locations.length < 1 ? null : available_locations
+
                        
                         newClient = await Client.create(user_info) 
 
-                        var encryptedPassword = await bcrypt.hash(users[i]['Rut'][0], 10);
+                        var encryptedPassword = await bcrypt.hash(rut, 10);
 
                         user.mobile = users[i]['Celular'][0]
+                        user.document_type = users[i]['Tipo de documento'][0]
                         user.email = users[i]['Email'][0]
-                        user.rut = users[i]['Rut'][0]
+                        user.rut = rut
                         user.encrypted_password = encryptedPassword
                         user.user_info_type = 'Client'
                         user.company = findCompany.id
-                        user.user_company = 'us.'+users[i]['Rut'][0]+'.comp.'+findCompany.id
+                        user.user_company = 'us.'+rut+'.comp.'+findCompany.id
                         user.user_info_id = newClient.id
 
                         newUser = await User.create(user)
@@ -485,7 +595,7 @@ var controller = {
                     
                             var data = {
                                 email: email,
-                                rut: users[i]['Rut'][0],
+                                rut: rut,
                                 company_id: findCompany.id,
                                 company_logo: findCompany.logo
                             }
@@ -497,7 +607,7 @@ var controller = {
                         }
 
                         if(userSaved == false){
-                            ruts.push(users[i]['Rut'][0])
+                            ruts.push(rut)
                         }
 
                     }
@@ -521,7 +631,8 @@ var controller = {
 
         }catch(e){
 
-            res.json({error:e})
+            res.json({ans:e})
+            
         }
       
     },
